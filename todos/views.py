@@ -1,8 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import TodoForm
+from django.contrib.auth.decorators import login_required
+from .models import Todo
 # from IPython import embed
 
 # Create your views here.
+@login_required
 def index(request):
     # # embed()
     # visit_num = request.session.get('visit_num', 0)
@@ -15,8 +18,15 @@ def index(request):
     #     'visit_num': visit_num,
     # }
 
-    return render(request, 'todos/index.html')
+    # 현재 로그인 한 사람의 정보를 가져와서 사용한다.
+    todos = request.user.todo_set.all().order_by('due_date')
+    context = {
+        'todos': todos,
+    }
 
+    return render(request, 'todos/index.html', context)
+
+@login_required
 def create(request):
     if request.method == "POST":
         form = TodoForm(request.POST)
@@ -31,3 +41,10 @@ def create(request):
         'form': form
     }
     return render(request, 'todos/form.html', context)
+
+@login_required
+def delete(request, id):
+    todo = get_object_or_404(Todo, id=id)
+    if todo.user == request.user:
+        todo.delete()
+    return redirect('todos:index')

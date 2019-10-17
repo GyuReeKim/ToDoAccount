@@ -31,7 +31,8 @@ def login(request):
         form = AuthenticationForm(request, request.POST) # request가 필요하다.
         if form.is_valid():
             auth_login(request, form.get_user())
-            return redirect('todos:index')
+            # next가 있으면 get방식으로 받아올 수 있다.
+            return redirect(request.GET.get('next') or 'todos:index')
     else:
         form = AuthenticationForm()
     context = {
