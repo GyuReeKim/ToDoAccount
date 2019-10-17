@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'accounts',
+    'bootstrap4',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,8 +56,9 @@ ROOT_URLCONF = 'wunderlist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        # 운영체제별로 경로설정 방법이 다르기때문에 함수를 사용한다.
+        'DIRS': [os.path.join(BASE_DIR, 'wunderlist', 'templates')], # 폴더 경로를 지정해준다.
+        'APP_DIRS': True, # 프로젝트 폴더는 검색하지 않는다.
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
