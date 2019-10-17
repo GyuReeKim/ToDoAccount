@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from .forms import TodoForm
 # from IPython import embed
 
 # Create your views here.
@@ -15,3 +16,18 @@ def index(request):
     # }
 
     return render(request, 'todos/index.html')
+
+def create(request):
+    if request.method == "POST":
+        form = TodoForm(request.POST)
+        if form.is_valid():
+            todo = form.save(commit=False) # 비어있는 column이 있기 때문에, 완전히 저장하지 않고 잠시 기다린다.
+            todo.user = request.user
+            todo.save()
+            return redirect('todos:index')
+    else:
+        form = TodoForm()
+    context = {
+        'form': form
+    }
+    return render(request, 'todos/form.html', context)
